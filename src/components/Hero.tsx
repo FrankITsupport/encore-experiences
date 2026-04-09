@@ -4,7 +4,7 @@ import heroImg from "@/assets/hero-photobooth.jpg";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <img src={heroImg} alt="Corporate event" className="w-full h-full object-cover" width={1920} height={1080} />
