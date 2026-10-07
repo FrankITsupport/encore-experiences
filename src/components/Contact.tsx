@@ -10,12 +10,12 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const subject = encodeURIComponent(`Event Inquiry from ${formData.name}`);
-    const body = encodeURIComponent(formData.message);
+    const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`);
     window.location.href = `mailto:info@venuebox.co.ke?subject=${subject}&body=${body}`;
   };
 
   return (
-    <section id="contact" className="py-32 px-6 relative">
+    <section id="contact" className="py-32 px-6 relative overflow-hidden">
       <div
         className="absolute bottom-0 left-0 w-full h-1/2 pointer-events-none"
         style={{ background: "linear-gradient(to top, hsl(240, 15%, 3%), transparent)" }}

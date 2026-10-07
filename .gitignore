@@ -9,7 +9,11 @@ lerna-debug.log*
 
 node_modules
 dist-ssr
+release/*.zip
 *.local
+.env
+.env.*
+!.env.example
 
 # Editor directories and files
 .vscode/*

@@ -1,105 +1,94 @@
-import { motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
-import heroImg from "@/assets/hero-photobooth.jpg";
+import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { useReducedMotion } from "framer-motion";
+import { getHeroSlides, starterSlides } from "@/lib/content";
+import { mediaUrl, siteHref } from "@/lib/media";
 
 const Hero = () => {
+  const { data: loadedSlides, isError } = useQuery({ queryKey: ["hero-slides"], queryFn: getHeroSlides });
+  const slides = isError ? starterSlides : loadedSlides ?? starterSlides;
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [interactionPaused, setInteractionPaused] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const reducedMotion = useReducedMotion();
+  const slide = slides[active];
+
+  useEffect(() => {
+    if (active >= slides.length) setActive(0);
+  }, [active, slides.length]);
+
+  useEffect(() => {
+    if (slides.length < 2 || paused || interactionPaused || reducedMotion) return;
+    const delay = slides[active]?.media_type === "video" ? 20000 : 7000;
+    const timer = window.setTimeout(() => setActive((index) => (index + 1) % slides.length), delay);
+    return () => window.clearTimeout(timer);
+  }, [active, paused, interactionPaused, reducedMotion, slides]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (paused || interactionPaused || reducedMotion) video.pause();
+    else void video.play().catch(() => undefined);
+  }, [active, paused, interactionPaused, reducedMotion, slide?.id]);
+
+  const move = (direction: number) => setActive((index) => (index + direction + slides.length) % slides.length);
+
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img src={heroImg} alt="Corporate event" className="w-full h-full object-cover" width={1920} height={1080} />
-        <div className="absolute inset-0 bg-background/80" />
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{ background: "radial-gradient(ellipse at 30% 50%, hsl(325, 85%, 50%, 0.3), transparent 60%), radial-gradient(ellipse at 70% 50%, hsl(186, 70%, 55%, 0.2), transparent 60%)" }}
-        />
+    <section id="home" aria-label="Featured experiences" onMouseEnter={() => setInteractionPaused(true)} onMouseLeave={() => setInteractionPaused(false)} onFocusCapture={() => setInteractionPaused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setInteractionPaused(false); }} className="relative min-h-[680px] min-h-screen flex items-center justify-center overflow-hidden bg-background">
+      {slide && (
+        <div className="absolute inset-0" key={slide.id}>
+          {slide.media_type === "video" ? (
+            <video
+              ref={videoRef}
+              src={mediaUrl(slide.media_path)}
+              poster={mediaUrl(slide.poster_path)}
+              autoPlay={!reducedMotion && !paused}
+              muted
+              playsInline
+              onEnded={() => slides.length > 1 && move(1)}
+              className="h-full w-full object-cover"
+              aria-hidden="true"
+            />
+          ) : (
+            <img src={mediaUrl(slide.media_path)} alt="" className="h-full w-full object-cover" fetchPriority="high" />
+          )}
+          <div className="absolute inset-0 bg-background/75" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/30" />
+        </div>
+      )}
+
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-36 text-center">
+        <span className="mb-6 inline-block rounded-full border border-white/20 px-4 py-1.5 font-display text-xs uppercase tracking-widest text-foreground/80">
+          Kenya's Premier Event Experience Company
+        </span>
+        <h1 className="mx-auto mb-8 max-w-5xl font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-7xl lg:text-8xl">
+          {slide?.title ?? "Unforgettable Experiences"}
+        </h1>
+        {slide?.subtitle && <p className="mx-auto mb-10 max-w-2xl font-body text-lg leading-relaxed text-foreground/80 sm:text-xl">{slide.subtitle}</p>}
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {slide?.cta_label && slide.cta_href && (
+            <a href={siteHref(slide.cta_href)} className="rounded-full px-8 py-4 font-display text-sm font-semibold text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>
+              {slide.cta_label}
+            </a>
+          )}
+          <a href={`${import.meta.env.BASE_URL}events`} className="rounded-full border border-white/30 px-8 py-4 font-display text-sm font-semibold text-foreground hover:border-primary/70">
+            Explore Events
+          </a>
+        </div>
       </div>
 
-      {/* Animated orbs */}
-      <motion.div
-        animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full blur-[100px] opacity-20"
-        style={{ background: "hsl(325, 85%, 50%)" }}
-      />
-      <motion.div
-        animate={{ x: [0, -30, 0], y: [0, 20, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-15"
-        style={{ background: "hsl(186, 70%, 55%)" }}
-      />
-
-      <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mb-6"
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-display font-medium tracking-widest uppercase border border-border text-muted-foreground">
-            Kenya's Premier Event Experience Company
-          </span>
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display text-5xl sm:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight mb-8"
-        >
-          <span className="text-foreground">We Create</span>
-          <br />
-          <span className="gradient-text">Unforgettable</span>
-          <br />
-          <span className="text-foreground">Experiences</span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="font-body text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed"
-        >
-          From mirror photobooths to 360° video experiences, we transform corporate events 
-          into immersive moments that captivate and engage.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.1 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-        >
-          <button
-            onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })}
-            className="px-8 py-4 rounded-full font-display text-sm font-semibold tracking-wide text-primary-foreground transition-transform hover:scale-105"
-            style={{ background: "var(--gradient-primary)" }}
-          >
-            Explore Our Products
+      {slides.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/20 bg-background/70 px-3 py-2 backdrop-blur-md" aria-label="Hero slideshow controls">
+          <button type="button" onClick={() => move(-1)} aria-label="Previous slide" className="rounded-full p-2 text-foreground hover:bg-white/10"><ChevronLeft size={20} /></button>
+          <span className="min-w-12 text-center text-xs text-foreground">{active + 1} / {slides.length}</span>
+          <button type="button" onClick={() => move(1)} aria-label="Next slide" className="rounded-full p-2 text-foreground hover:bg-white/10"><ChevronRight size={20} /></button>
+          <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Play slideshow" : "Pause slideshow"} className="rounded-full p-2 text-foreground hover:bg-white/10">
+            {paused ? <Play size={18} /> : <Pause size={18} />}
           </button>
-          <button
-            onClick={() => document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })}
-            className="px-8 py-4 rounded-full font-display text-sm font-semibold tracking-wide text-foreground border border-border hover:border-primary/50 transition-all hover:glow-pink"
-          >
-            Our Services
-          </button>
-        </motion.div>
-      </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <ArrowDown className="text-muted-foreground" size={20} />
-        </motion.div>
-      </motion.div>
+        </div>
+      )}
     </section>
   );
 };

@@ -16,7 +16,7 @@ const Services = () => {
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (
-    <section id="services" className="py-32 px-6 relative">
+    <section id="services" className="py-32 px-6 relative overflow-hidden">
       {/* Subtle bg glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[200px] opacity-10 pointer-events-none"

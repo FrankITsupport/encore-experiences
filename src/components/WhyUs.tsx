@@ -15,7 +15,7 @@ const WhyUs = () => {
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (
-    <section id="about" className="py-32 px-6">
+    <section id="about" className="py-32 px-6 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div

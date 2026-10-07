@@ -1,0 +1,32 @@
+VENUEBOX CPANEL DEPLOYMENT
+
+For automatic updates on every GitHub main push, see
+docs/automated-deploy.md in venuebox-setup.zip. Leave automatic deployment
+disabled until the cPanel SSH key, database config, and document root are set.
+
+IF THE OLD SITE IS STILL LIVE: do not extract the new website ZIP over it.
+Back up the old files/database and test the new site on a staging subdomain
+with a separate document root first. See docs/cpanel-setup.md in the setup ZIP.
+
+1. venuebox-website.zip contains the built frontend AND the PHP API.
+   Its files belong directly inside the website's document root (usually public_html).
+   The build in this ZIP assumes the website is at the domain root (/).
+   Keep both .htaccess files when extracting.
+
+2. venuebox-setup.zip contains the database schema and migration runner,
+   an admin account creation script, a database config template, and guides.
+   Do NOT extract this ZIP inside public_html. Keep the database config and
+   admin setup script outside the document root.
+
+3. FileZilla transfers ZIP files but does not unpack them on the server.
+   Either extract venuebox-website.zip on your computer and transfer its
+   contents with FileZilla, or upload the ZIP and use cPanel File Manager's
+   Extract action in the document root. Delete the ZIP from the public
+   website folder after extraction.
+
+4. Create the database, import server/schema.sql, configure
+   /home/YOUR_CPANEL_USER/venuebox-config.php, and create the admin account.
+   Follow docs/cpanel-setup.md from venuebox-setup.zip.
+
+5. On later deployments, keep the existing uploads/ files. New frontend
+   builds do not contain images and videos uploaded by the client.
