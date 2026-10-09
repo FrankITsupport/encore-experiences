@@ -1,8 +1,11 @@
 <?php
-// Copy to /home/YOUR_CPANEL_USER/venuebox-config.php, outside public_html.
+// Copy to /home/venuebox/venuebox-config.php, outside public_html.
+// Replace only the placeholder line with the database user's password.
 return [
     'db_host' => 'localhost',
-    'db_name' => 'CPANELUSER_venuebox',
-    'db_user' => 'CPANELUSER_venuebox',
-    'db_password' => 'REPLACE_WITH_DATABASE_PASSWORD',
+    'db_name' => 'venuebox_website',
+    'db_user' => 'venuebox_venuebox',
+    'db_password' => <<<'VENUEBOX_DB_PASSWORD'
+REPLACE_WITH_DATABASE_PASSWORD
+VENUEBOX_DB_PASSWORD,
 ];
