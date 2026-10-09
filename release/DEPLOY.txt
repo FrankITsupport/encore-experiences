@@ -27,6 +27,9 @@ with a separate document root first. See docs/cpanel-setup.md in the setup ZIP.
 4. Create the database, import server/schema.sql, configure
    /home/YOUR_CPANEL_USER/venuebox-config.php, and create the admin account.
    Follow docs/cpanel-setup.md from venuebox-setup.zip.
+   Without cPanel Terminal, extract the setup ZIP on this Windows computer,
+   double-click scripts/create-admin-sql.cmd, and import the generated SQL
+   file from the Desktop into the website database through phpMyAdmin.
 
 5. On later deployments, keep the existing uploads/ files. New frontend
    builds do not contain images and videos uploaded by the client.

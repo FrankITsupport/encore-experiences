@@ -38,7 +38,10 @@ $setupFiles = @(
     'server/migrate.php',
     'server/migrations/0001_initial.sql',
     'server/create-admin.php',
+    'server/hash-admin-password.php',
     'server/venuebox-config.example.php',
+    'scripts/create-admin-sql.ps1',
+    'scripts/create-admin-sql.cmd',
     'docs/cpanel-setup.md',
     'docs/automated-deploy.md',
     'release/DEPLOY.txt'
