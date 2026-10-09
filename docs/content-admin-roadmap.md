@@ -1,6 +1,6 @@
 # VenueBox content and admin roadmap
 
-Last updated: 2026-10-07
+Last updated: 2026-10-09
 
 ## Goal
 
@@ -24,7 +24,7 @@ Check a box when the acceptance condition has been verified. Code written locall
 - [x] **P1-02 — Write the PHP API.** Public read endpoints and authenticated editor endpoints are in `public/api/index.php`.
 - [x] **P1-03 — Add upload handling.** Validate MIME type and size on the server, generate safe file names, and block script execution in the upload directory.
 - [x] **P1-04 — Add admin security.** Password hashes, login throttling, session cookies, CSRF checks, and server side publication rules are implemented locally.
-- [ ] **P1-05 — Configure a real database.** Create the database and user in cPanel, import schema, store credentials outside the document root, and create the one admin account.
+- [x] **P1-05 — Configure a real database.** `venuebox_website` and `venuebox_venuebox` are configured in cPanel, the schema is imported, the private config is outside `public_html`, and the user confirmed the admin login works.
 - [ ] **P1-06 — Verify API permissions on live hosting.** Test anonymous reads, blocked writes/uploads, login, and draft privacy with direct requests.
 
 ### 2. Admin editing
@@ -45,8 +45,8 @@ Check a box when the acceptance condition has been verified. Code written locall
 
 - [ ] **P4-01 — Configure backups.** Include database and uploaded files; perform one restore check.
 - [ ] **P4-02 — Add launch content.** Import client events and approved media.
-- [ ] **P4-03 — Give client editing guide.** Include login URL and the event/hero/equipment workflow.
-- [x] **P4-04 — Prepare GitHub automation.** A push to `main` builds and checks the site; a versioned migration runner and SSH deployment job are written locally.
+- [x] **P4-03 — Give client editing guide.** See [client editing guide](client-editing-guide.md) for the login and event/hero/equipment workflow.
+- [x] **P4-04 — Prepare GitHub automation.** The workflow is on GitHub `main`; its first build succeeded. The SSH deployment job is gated off until hosting access is ready.
 - [ ] **P4-05 — Connect and verify automatic deployment.** Configure cPanel SSH and GitHub secrets/variables, run the first live deployment, then confirm later pushes update the site without touching uploads.
 
 ## Current limits and decisions
@@ -65,5 +65,9 @@ See [cPanel setup](cpanel-setup.md) for deployment steps.
 - An unsigned PHP session returned `null`; anonymous write and upload requests returned HTTP 401.
 - Both cPanel ZIPs were rebuilt. The website archive now uses forward slash paths and contains the API, starter media, and upload protection file.
 
-The cPanel deployment, database backed editing, real uploads, media limits, backups, and client content still require checks on the live host.
-Automatic deployment also remains disabled until the cPanel SSH details, database config, and GitHub repository settings are confirmed. See [automatic deployment](automated-deploy.md).
+## Live verification on 2026-10-09
+
+- The homepage, `/events`, and `/admin` all returned HTTP 200 from the cPanel site. The hero and equipment API endpoints returned HTTP 200, and the events endpoint returned an empty list before content was added.
+- The user confirmed the database-backed admin sign-in works. Anonymous event writes and media uploads returned HTTP 401.
+- Real image/video uploads, editing and publishing records, draft privacy, video playback, host upload limits, and backups still need live checks.
+- Automatic deployment remains disabled until the hosting provider confirms SSH shell access and port. See [automatic deployment](automated-deploy.md).

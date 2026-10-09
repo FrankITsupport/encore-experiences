@@ -44,6 +44,7 @@ $setupFiles = @(
     'scripts/create-admin-sql.cmd',
     'docs/cpanel-setup.md',
     'docs/automated-deploy.md',
+    'docs/client-editing-guide.md',
     'release/DEPLOY.txt'
 )
 $archive = [System.IO.Compression.ZipFile]::Open($setupZip, [System.IO.Compression.ZipArchiveMode]::Create)
